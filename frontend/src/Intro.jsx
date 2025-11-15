@@ -19,19 +19,10 @@ const Intro = ({ onIntroComplete }) => {
 
   return (
     <div className={`intro-container ${animate ? 'animate' : ''}`}>
-      {/* <video
-        className="background-video"
-        autoPlay
-        loop
-        muted
-        playsInline
-      >
-        <source src={backgroundVideo} type="video/mp4" />
-      </video> */}
       <div className="intro-content">
-        <h1 className="intro-text">CodeSmart AI Editor</h1>
+        <h1 className="intro-text">CodeClash — Collaborative Editor</h1>
         <p className="intro-subtext">
-          Revolutionizing coding with real-time AI-driven insights
+          A professional, real-time collaborative coding environment with AI-assisted insights. Start or join a room to code together — Python-first, with seamless collaboration and clear, concise tooling.
         </p>
       </div>
       <div className="background-overlay"></div>
