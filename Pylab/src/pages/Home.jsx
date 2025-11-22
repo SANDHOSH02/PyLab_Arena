@@ -1,56 +1,46 @@
-import React from "react";
+// src/pages/Home.jsx
+
 import { Link } from "react-router-dom";
 
-export default function Home() {
+const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100 flex items-center justify-center p-6">
-      {/* Main Card */}
-      <div className="w-full max-w-2xl">
-        <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-12 text-center border border-white/20">
-          {/* Logo / Title */}
-          <div className="mb-10">
-            <h1 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-cyan-600 to-indigo-600 bg-clip-text text-transparent">
-              PyLab Arena
-            </h1>
-            <p className="mt-4 text-xl text-gray-600 font-medium">
-              Master Python. Compete. Dominate.
-            </p>
-          </div>
+    <div className="min-h-screen bg-black text-white flex flex-col">
 
-          {/* Tagline */}
-          <p className="text-lg text-gray-700 mb-12 max-w-md mx-auto">
-            Join the ultimate coding battlefield. Solve challenges, climb the leaderboard, and become a Python legend.
-          </p>
+      {/* HERO */}
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
+        <h1 className="text-4xl font-bold md:text-5xl">
+          Welcome to PythonLearn
+        </h1>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link
-              to="/login"
-              className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
-            >
-              Login
-            </Link>
+        <p className="mt-4 text-gray-300 max-w-xl">
+          Learn Python from scratch, practice coding, solve challenges,
+          track your progress & become a master.
+        </p>
 
-            <Link
-              to="/register"
-              className="w-full sm:w-auto px-10 py-4 bg-white text-indigo-700 font-bold text-lg rounded-xl shadow-lg border-2 border-indigo-200 hover:bg-indigo-50 hover:border-indigo-400 transform hover:scale-105 transition-all duration-200"
-            >
-              Register Now
-            </Link>
-          </div>
+        <div className="mt-8 flex gap-4">
+          <Link
+            to="/learn"
+            className="bg-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+          >
+            Start Learning
+          </Link>
 
-          {/* Optional Footer */}
-          <div className="mt-16 text-sm text-gray-500">
-            <p>Ready to write some Python? 🐍</p>
-          </div>
-        </div>
-
-        {/* Decorative Background Element */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-cyan-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-1000"></div>
+          <Link
+            to="/problems"
+            className="border border-gray-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition"
+          >
+            Solve Problems
+          </Link>
         </div>
       </div>
+
+      {/* FOOTER */}
+      <footer className="py-4 text-center text-gray-500 border-t border-gray-700">
+        © {new Date().getFullYear()} PythonLearn
+      </footer>
+
     </div>
   );
-}
+};
+
+export default Home;

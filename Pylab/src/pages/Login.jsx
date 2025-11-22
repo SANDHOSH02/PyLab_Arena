@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { loginUser, isAdmin } from "../firebase/authService";
 import { auth } from "../firebase/config";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -12,14 +14,21 @@ export default function Login() {
     try {
       await loginUser(email, password);
       const admin = await isAdmin(auth.currentUser?.uid);
-
-      alert(admin ? "Welcome back, Admin! 👑" : "Welcome back! 🎉");
+      alert(admin ? "Welcome back, Admin! 👑 Redirecting..." : "Welcome back! 🎉 Redirecting...");
+      navigate("/", { replace: true });
     } catch (error) {
       alert("Login failed: " + error.message);
     } finally {
       setLoading(false);
     }
   };
+
+  // If already logged in, redirect to home
+  useEffect(() => {
+    if (auth.currentUser) {
+      navigate("/", { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4">
@@ -61,9 +70,9 @@ export default function Login() {
 
           <p className="text-center text-sm text-gray-600 mt-6">
             Don't have an account?{" "}
-            <a href="/register" className="text-purple-600 font-medium hover:underline">
+            <Link to="/register" className="text-purple-600 font-medium hover:underline">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </div>

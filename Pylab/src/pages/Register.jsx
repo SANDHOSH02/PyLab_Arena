@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../firebase/authService";
+import { auth } from "../firebase/config";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -10,13 +13,21 @@ export default function Register() {
     setLoading(true);
     try {
       await registerUser(email, password);
-      alert("Account created successfully! 🎉");
+      alert("Account created successfully! 🎉 Redirecting to login...");
+      navigate("/login", { replace: true });
     } catch (error) {
       alert("Registration failed: " + error.message);
     } finally {
       setLoading(false);
     }
   };
+
+  // If user is already authenticated, send them to home
+  useEffect(() => {
+    if (auth.currentUser) {
+      navigate("/", { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -58,9 +69,9 @@ export default function Register() {
 
           <p className="text-center text-sm text-gray-600 mt-6">
             Already have an account?{" "}
-            <a href="/login" className="text-indigo-600 font-medium hover:underline">
+            <Link to="/login" className="text-indigo-600 font-medium hover:underline">
               Log in
-            </a>
+            </Link>
           </p>
         </div>
       </div>
