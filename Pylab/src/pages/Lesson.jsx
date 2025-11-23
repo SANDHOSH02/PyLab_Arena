@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function Lesson() {
   const id = 1; // In real app, use useParams()
@@ -13,6 +13,10 @@ export default function Lesson() {
   const [saveError, setSaveError] = useState(null);
   const [savedId, setSavedId] = useState(null);
   const [videoPreview, setVideoPreview] = useState(false);
+  const [violations, setViolations] = useState(0);
+  const [isLocked, setIsLocked] = useState(false);
+  const [warningMessage, setWarningMessage] = useState(null);
+  const quizRef = useRef(null);
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
@@ -91,6 +95,93 @@ export default function Lesson() {
       setSaving(false);
     }
   };
+
+  // Anti-cheat: attach listeners while quiz modal is open
+  useEffect(() => {
+    if (!showQuiz) return;
+
+    const maxViolations = 3;
+
+    const incrementViolation = (reason) => {
+      setViolations((v) => {
+        const nv = v + 1;
+        setWarningMessage(`${reason} — (${nv}/${maxViolations})`);
+        if (nv >= maxViolations) {
+          setIsLocked(true);
+          setWarningMessage('Locked due to multiple violations');
+          // auto-submit after brief delay
+          setTimeout(() => {
+            try { submitQuiz(); } catch (e) { console.error(e); }
+            setShowQuiz(false);
+          }, 600);
+        }
+        return nv;
+      });
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) incrementViolation('Tab switch or window hidden');
+    };
+    const handleBlur = () => { incrementViolation('Window lost focus'); };
+    const handleContext = (e) => { e.preventDefault(); incrementViolation('Right-click/context menu'); };
+    const handleCopy = (e) => { e.preventDefault(); incrementViolation('Copy or clipboard attempt'); };
+    const handlePaste = (e) => { e.preventDefault(); incrementViolation('Paste attempt'); };
+    const handleKeydown = (e) => {
+      // Block devtools and common shortcuts
+      const k = e.key.toUpperCase();
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (k === 'I' || k === 'J' || k === 'C')) || (e.ctrlKey && k === 'U')) {
+        e.preventDefault();
+        incrementViolation('DevTools/inspect attempt');
+        return;
+      }
+      if (e.ctrlKey && (k === 'C' || k === 'V' || k === 'X' || k === 'P' || k === 'S' || k === 'A')) {
+        e.preventDefault();
+        incrementViolation('Clipboard/shortcut blocked');
+        return;
+      }
+    };
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) incrementViolation('Exited fullscreen');
+    };
+
+    // add listeners
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('blur', handleBlur);
+    document.addEventListener('contextmenu', handleContext, true);
+    document.addEventListener('copy', handleCopy, true);
+    document.addEventListener('cut', handleCopy, true);
+    document.addEventListener('paste', handlePaste, true);
+    document.addEventListener('keydown', handleKeydown, true);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    // try to request fullscreen for quizRef (may require user gesture)
+    (async () => {
+      try {
+        if (quizRef.current && quizRef.current.requestFullscreen) await quizRef.current.requestFullscreen();
+        else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+      } catch (e) {
+        // ignore — may be blocked by browser
+        console.warn('Fullscreen request failed', e);
+      }
+    })();
+
+    return () => {
+      // cleanup
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('blur', handleBlur);
+      document.removeEventListener('contextmenu', handleContext, true);
+      document.removeEventListener('copy', handleCopy, true);
+      document.removeEventListener('cut', handleCopy, true);
+      document.removeEventListener('paste', handlePaste, true);
+      document.removeEventListener('keydown', handleKeydown, true);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      setWarningMessage(null);
+      setViolations(0);
+      setIsLocked(false);
+      // exit fullscreen if still active
+      try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+    };
+  }, [showQuiz]);
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
@@ -449,7 +540,7 @@ export default function Lesson() {
 
         {/* Quiz Modal */}
         {showQuiz && mcqs && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div ref={quizRef} className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn" onContextMenu={(e) => { if(!isLocked){ e.preventDefault(); return false; } }}>
             <div className="bg-gray-800 rounded-lg border border-gray-700 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
               
               {/* Quiz Header */}
@@ -472,6 +563,15 @@ export default function Lesson() {
                   </button>
                 </div>
               </div>
+
+              {/* Warning area for anti-cheat */}
+              {warningMessage && (
+                <div className="p-3 bg-yellow-900/60 border-l-4 border-yellow-500 text-yellow-200 font-mono mb-4 rounded">
+                  <strong>Warning:</strong> {warningMessage}
+                </div>
+              )}
+
+
 
               {/* Quiz Content */}
               <div className="p-6 space-y-6">
@@ -511,8 +611,8 @@ export default function Lesson() {
                               name={`q-${q.id}`} 
                               className="w-4 h-4"
                               checked={isSelected} 
-                              onChange={() => !score && handleAnswer(q.id, optLetter)}
-                              disabled={!!score}
+                              onChange={() => !score && !isLocked && handleAnswer(q.id, optLetter)}
+                              disabled={!!score || isLocked}
                             />
                             <div className="flex-1 flex items-center justify-between">
                               <span className="text-sm font-mono">{q[optKey]}</span>
@@ -588,6 +688,14 @@ export default function Lesson() {
             </div>
           </div>
         )}
+
+        {/* Anti-cheat: when quiz is shown, enable listeners */}
+        
+        {/* Anti-cheat effect: attach listeners while quiz is open */}
+        {typeof window !== 'undefined' && (function(){
+          // this IIFE is a placeholder so the code below is kept in the file but executed via a real useEffect
+          return null;
+        })()}
       </div>
 
       <style jsx>{`
@@ -603,3 +711,9 @@ export default function Lesson() {
     </div>
   );
 }
+
+// Anti-cheat helpers (not exported) — added below component for clarity
+
+// We'll implement the exam-mode listeners inside a small effect using the global document.
+// Because this file is already large, define the effect-adding logic here and call it
+// from inside the component via a useEffect when `showQuiz` changes.
