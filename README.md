@@ -132,10 +132,3 @@ Below is a simple 3x3 gallery — this will render on GitHub and other Markdown 
 	<img src="Pylab/ss/9.png" alt="Screenshot 9" width="320" />
 </div>
 
-Notes:
-- Create the folder `ss/` at the repository root (same level as this `README.md`) and add your nine PNG/JPG images.
-- Use optimized images (recommended under 1MB each) for faster loading on GitHub.
-- If you prefer different filenames or JPG format, update the `src` attributes accordingly.
-
-
-
