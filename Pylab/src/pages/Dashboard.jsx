@@ -4,6 +4,10 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
 
+  const [stats, setStats] = useState(null);
+  const [loadingStats, setLoadingStats] = useState(false);
+  const [statsError, setStatsError] = useState(null);
+
   useEffect(() => {
     try {
       const raw = localStorage.getItem('user');
@@ -18,24 +22,29 @@ export default function Dashboard() {
     window.location.href = '/login';
   };
 
-  // Mock data for better visualization
-  const stats = {
-    lessonsCompleted: 12,
-    problemsSolved: 8,
-    hoursLearned: 15.5,
-    currentStreak: 5,
-    totalXP: 1250,
-    level: 3,
-    nextLevelXP: 2000
-  };
+  // progress and stats loaded from backend
+  const progressPercentage = stats && stats.nextLevelXP ? ((stats.totalXP / stats.nextLevelXP) * 100).toFixed(1) : 0;
 
-  const recentActivity = [
-    { id: 1, title: "Completed: Variables & Data Types", time: "2 hours ago", icon: "📚", type: "lesson" },
-    { id: 2, title: "Solved: Sum of Two Numbers", time: "5 hours ago", icon: "⚡", type: "problem" },
-    { id: 3, title: "Started: Control Flow Module", time: "1 day ago", icon: "🎯", type: "lesson" },
-  ];
-
-  const progressPercentage = ((stats.totalXP / stats.nextLevelXP) * 100).toFixed(1);
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user || !user.id) return;
+      setLoadingStats(true);
+      setStatsError(null);
+      const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+      try {
+        const res = await fetch(`${API_BASE}/api/users/${user.id}/stats`);
+        if (!res.ok) throw new Error('Failed to load stats');
+        const json = await res.json();
+        setStats(json);
+      } catch (err) {
+        console.error('Fetch stats error', err);
+        setStatsError(err.message || 'Failed to load stats');
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+    fetchStats();
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
@@ -92,9 +101,9 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <div className="px-3 py-1 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-full text-sm font-mono font-bold">
-                  Level {stats.level}
+                  Level {stats ? stats.level : '—'}
                 </div>
-                <span className="font-mono font-bold text-lg">{stats.totalXP} XP</span>
+                <span className="font-mono font-bold text-lg">{stats ? stats.totalXP : '—'} XP</span>
               </div>
               <span className="text-sm font-mono text-gray-400">{progressPercentage}% to next level</span>
             </div>
@@ -105,8 +114,8 @@ export default function Dashboard() {
               ></div>
             </div>
             <div className="flex items-center justify-between mt-2 text-xs font-mono text-gray-500">
-              <span>{stats.totalXP} XP</span>
-              <span>{stats.nextLevelXP} XP</span>
+              <span>{stats ? stats.totalXP : '—'} XP</span>
+              <span>{stats ? stats.nextLevelXP : '—'} XP</span>
             </div>
           </div>
         </div>
@@ -118,7 +127,7 @@ export default function Dashboard() {
               <div className="text-sm text-gray-400 font-mono">Lessons</div>
               <div className="text-2xl group-hover:scale-110 transition-transform">📚</div>
             </div>
-            <div className="text-3xl font-bold text-blue-400">{stats.lessonsCompleted}</div>
+            <div className="text-3xl font-bold text-blue-400">{stats ? stats.lessonsCompleted : (loadingStats ? '...' : 0)}</div>
             <div className="text-xs text-gray-500 font-mono mt-1">completed</div>
           </div>
           
@@ -127,7 +136,7 @@ export default function Dashboard() {
               <div className="text-sm text-gray-400 font-mono">Problems</div>
               <div className="text-2xl group-hover:scale-110 transition-transform">⚡</div>
             </div>
-            <div className="text-3xl font-bold text-green-400">{stats.problemsSolved}</div>
+            <div className="text-3xl font-bold text-green-400">{stats ? stats.problemsSolved : (loadingStats ? '...' : 0)}</div>
             <div className="text-xs text-gray-500 font-mono mt-1">solved</div>
           </div>
           
@@ -136,7 +145,7 @@ export default function Dashboard() {
               <div className="text-sm text-gray-400 font-mono">Hours</div>
               <div className="text-2xl group-hover:scale-110 transition-transform">⏱️</div>
             </div>
-            <div className="text-3xl font-bold text-purple-400">{stats.hoursLearned}h</div>
+            <div className="text-3xl font-bold text-purple-400">{stats ? stats.hoursLearned : (loadingStats ? '...' : 0)}h</div>
             <div className="text-xs text-gray-500 font-mono mt-1">learned</div>
           </div>
           
@@ -145,7 +154,7 @@ export default function Dashboard() {
               <div className="text-sm text-gray-400 font-mono">Streak</div>
               <div className="text-2xl group-hover:scale-110 transition-transform">🔥</div>
             </div>
-            <div className="text-3xl font-bold text-orange-400">{stats.currentStreak}</div>
+            <div className="text-3xl font-bold text-orange-400">{stats ? stats.currentStreak : (loadingStats ? '...' : 0)}</div>
             <div className="text-xs text-gray-500 font-mono mt-1">days</div>
           </div>
         </div>
@@ -179,7 +188,7 @@ export default function Dashboard() {
                     <span className="text-green-400"># </span>My Progress
                   </h2>
                   
-                  {stats.lessonsCompleted === 0 && stats.problemsSolved === 0 ? (
+                  {(!stats || (stats.lessonsCompleted === 0 && stats.problemsSolved === 0)) ? (
                     <div className="text-center py-8">
                       <div className="text-6xl mb-4">🚀</div>
                       <p className="text-gray-400 font-mono mb-4">No progress data yet.</p>
@@ -271,24 +280,25 @@ export default function Dashboard() {
                   <span className="text-green-400"># </span>Recent Activity
                 </h2>
                 
-                {recentActivity.length === 0 ? (
+                {(!stats || (stats.recentActivity && stats.recentActivity.length === 0)) ? (
                   <div className="text-center py-8">
                     <div className="text-6xl mb-4">📊</div>
                     <p className="text-gray-400 font-mono">No activity yet.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {recentActivity.map((activity) => (
-                      <div key={activity.id} className="flex items-start gap-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-gray-600 transition-all duration-300">
+                    {(stats.recentActivity || []).map((activity) => (
+                      <div key={`${activity.type}-${activity.id}`} className="flex items-start gap-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-gray-600 transition-all duration-300">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl ${
-                          activity.type === 'lesson' ? 'bg-blue-500/20' : 'bg-green-500/20'
+                          activity.type === 'mcq' ? 'bg-blue-500/20' : 'bg-green-500/20'
                         }`}>
-                          {activity.icon}
+                          {activity.type === 'mcq' ? '📚' : '⚡'}
                         </div>
                         <div className="flex-1">
                           <div className="font-mono font-semibold">{activity.title}</div>
-                          <div className="text-sm text-gray-400 font-mono mt-1">{activity.time}</div>
+                          <div className="text-sm text-gray-400 font-mono mt-1">{new Date(activity.time).toLocaleString()}</div>
                         </div>
+                        <div className="text-sm font-mono text-gray-400">{activity.score} pts</div>
                       </div>
                     ))}
                   </div>
