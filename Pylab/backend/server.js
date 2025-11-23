@@ -51,6 +51,21 @@ app.get('/api/problems/:id', async (req, res) => {
   }
 });
 
+// Save a problem attempt/result
+app.post('/api/problems/:id/attempt', async (req, res) => {
+  try {
+    const problemId = req.params.id;
+    const { user_id, score } = req.body;
+    if (typeof score !== 'number') return res.status(400).json({ message: 'Score (number) is required' });
+
+    const [result] = await db.execute('INSERT INTO problem_results (user_id, problem_id, score) VALUES (?, ?, ?)', [user_id || null, problemId, score]);
+    return res.status(201).json({ id: result.insertId, message: 'Problem attempt saved' });
+  } catch (err) {
+    console.error('Save problem attempt error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Get lessons (optional query param: ?level=1)
 app.get('/api/lessons', async (req, res) => {
   try {

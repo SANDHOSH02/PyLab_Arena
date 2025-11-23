@@ -84,7 +84,7 @@ const Home = () => {
           <h1 className="text-5xl font-bold md:text-6xl mb-6 animate-slide-up">
             Welcome to{" "}
             <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-transparent bg-clip-text">
-              PythonLearn
+              PyLearn
             </span>
           </h1>
 
@@ -196,8 +196,8 @@ const Home = () => {
       {/* FOOTER */}
       <footer className="py-6 text-center text-gray-500 border-t border-gray-800 relative z-10">
         <div className="font-mono text-sm">
-          © {new Date().getFullYear()} PythonLearn <span className="text-gray-600">|</span>{" "}
-          <span className="text-blue-400">{'{ Code • Learn • Master }'}</span>
+          © {new Date().getFullYear()} PyLearn <span className="text-gray-600">|</span>{" "}
+          <span className="text-blue-400">{'{ Code • Learn • Master }' } {'Made By Sandhosh !!'}</span>
         </div>
       </footer>
 

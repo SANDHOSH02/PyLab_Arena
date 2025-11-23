@@ -7,6 +7,7 @@ export default function SolveProblem() {
   const [code, setCode] = useState('');
   const [lang, setLang] = useState('py');
   const [output, setOutput] = useState('');
+  const [lastResultStatus, setLastResultStatus] = useState(null); // 'correct' | 'wrong' | null
   const [theme, setTheme] = useState('dark');
   const [fontSize, setFontSize] = useState(14);
   const [isRunning, setIsRunning] = useState(false);
@@ -35,9 +36,10 @@ export default function SolveProblem() {
             id: String(p.id), 
             title: p.title, 
             desc: p.description || '', 
-            template: '# Write Python code here\n', 
+            template: p.template || '# Write Python code here\n', 
             lang: 'py',
-            difficulty: ['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)]
+            difficulty: p.difficulty || ['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)],
+            expected: p.expected_output || p.expected || null
           }))
         }));
         setStages(newStages);
@@ -61,6 +63,7 @@ export default function SolveProblem() {
     setCode(selected.template || '');
     setLang(selected.lang || 'py');
     setOutput('');
+    setLastResultStatus(null);
   }, [selected]);
 
   useEffect(() => {
@@ -109,7 +112,20 @@ export default function SolveProblem() {
       const wrapper = `import sys, io, traceback\nbuf = io.StringIO()\nold = sys.stdout\nsys.stdout = buf\ntry:\n${indented}\nexcept Exception:\n    traceback.print_exc()\nfinally:\n    sys.stdout = old\nresult = buf.getvalue()`;
       
       const result = await pyodide.runPythonAsync(wrapper + '\nresult');
-      setOutput(result || '✅ Code executed successfully (no output)');
+      const normalized = (result || '').toString().trim();
+      setOutput(normalized || '✅ Code executed successfully (no output)');
+
+      // If problem provides expected output, compare and set status
+      if (selected && (selected.expected !== null && selected.expected !== undefined)) {
+        const expected = String(selected.expected).trim();
+        if (expected === normalized) {
+          setLastResultStatus('correct');
+        } else {
+          setLastResultStatus('wrong');
+        }
+      } else {
+        setLastResultStatus(null);
+      }
     } catch (err) {
       console.error(err);
       setOutput('❌ Error:\n' + (err.message || String(err)));
@@ -130,12 +146,34 @@ export default function SolveProblem() {
       userId, 
       lang, 
       code, 
-      createdAt: new Date().toISOString() 
+      createdAt: new Date().toISOString(),
+      correct: lastResultStatus === 'correct'
     };
     attempts.unshift(record);
     localStorage.setItem('problem_attempts', JSON.stringify(attempts));
-    
-    setOutput('✅ Attempt saved successfully!\n\nYour solution has been recorded locally.');
+
+    // attempt to persist to backend
+    (async () => {
+      try {
+        const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+        // map correctness to a numeric score (100 for correct, 0 for wrong)
+        const score = record.correct ? 100 : 0;
+        const res = await fetch(`${API_BASE}/api/problems/${selected.id}/attempt`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: record.userId, score })
+        });
+        if (!res.ok) {
+          console.warn('Failed to save attempt to server');
+          setOutput('✅ Attempt saved locally. Failed to save to server.');
+        } else {
+          setOutput('✅ Attempt saved successfully (local + server).');
+        }
+      } catch (err) {
+        console.error('Persist attempt error', err);
+        setOutput('✅ Attempt saved locally. Error saving to server.');
+      }
+    })();
   };
 
   const getDifficultyColor = (difficulty) => {
@@ -286,6 +324,12 @@ export default function SolveProblem() {
                         <span className={`text-xs px-3 py-1 rounded-full border ${getDifficultyColor(selected.difficulty)}`}>
                           {selected.difficulty}
                         </span>
+                        {lastResultStatus === 'correct' && (
+                          <span className="ml-3 text-xs px-3 py-1 rounded-full bg-green-600 text-white font-mono">✔ Correct</span>
+                        )}
+                        {lastResultStatus === 'wrong' && (
+                          <span className="ml-3 text-xs px-3 py-1 rounded-full bg-red-600 text-white font-mono">✖ Wrong</span>
+                        )}
                       </div>
                       <div className="text-sm text-gray-400 font-mono">Problem ID: {selected.id}</div>
                     </div>
@@ -423,6 +467,12 @@ export default function SolveProblem() {
                       <pre className="h-full bg-black p-6 font-mono text-sm text-green-300 whitespace-pre-wrap" style={{ fontSize: `${fontSize}px` }}>
                         {output || '// Output will appear here after running your code\n// Click "Run Code" to execute'}
                       </pre>
+                      {lastResultStatus === 'wrong' && selected && selected.expected && (
+                        <div className="p-4 mt-2 bg-red-900/40 rounded border border-red-700 text-sm">
+                          <div className="font-mono font-semibold text-sm text-red-200 mb-1">Expected Output:</div>
+                          <pre className="whitespace-pre-wrap text-red-100 text-sm">{String(selected.expected)}</pre>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
