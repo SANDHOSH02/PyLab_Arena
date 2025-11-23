@@ -25,6 +25,32 @@ app.get('/api/levels', async (req, res) => {
   }
 });
 
+// Get problems list (optional ?limit=&offset=)
+app.get('/api/problems', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 100;
+    const offset = parseInt(req.query.offset) || 0;
+    const [rows] = await db.execute('SELECT id, title, description, difficulty FROM problems ORDER BY id LIMIT ? OFFSET ?', [limit, offset]);
+    return res.json(rows);
+  } catch (err) {
+    console.error('Get problems error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get single problem by id
+app.get('/api/problems/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const [rows] = await db.execute('SELECT id, title, description, difficulty FROM problems WHERE id = ?', [id]);
+    if (!rows.length) return res.status(404).json({ message: 'Problem not found' });
+    return res.json(rows[0]);
+  } catch (err) {
+    console.error('Get problem error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Get lessons (optional query param: ?level=1)
 app.get('/api/lessons', async (req, res) => {
   try {

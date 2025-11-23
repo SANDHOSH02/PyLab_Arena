@@ -711,9 +711,3 @@ export default function Lesson() {
     </div>
   );
 }
-
-// Anti-cheat helpers (not exported) — added below component for clarity
-
-// We'll implement the exam-mode listeners inside a small effect using the global document.
-// Because this file is already large, define the effect-adding logic here and call it
-// from inside the component via a useEffect when `showQuiz` changes.
