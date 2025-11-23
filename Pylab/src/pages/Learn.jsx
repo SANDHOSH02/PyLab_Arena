@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Learn = () => {
   const [selectedLevel, setSelectedLevel] = useState(null);
@@ -254,18 +255,18 @@ const Learn = () => {
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-2">
-                      <a
-                        href="/learn"
-                        className="flex-1 py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-mono text-sm font-semibold text-center hover:from-blue-500 hover:to-purple-500 transition-all duration-300"
-                      >
-                        Start Learning →
-                      </a>
-                      <a
-                        href="/solve-problem"
+                        <Link
+                          to={`/learn/${ls.id}`}
+                          className="flex-1 py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-mono text-sm font-semibold text-center hover:from-blue-500 hover:to-purple-500 transition-all duration-300"
+                        >
+                          Start Learning →
+                        </Link>
+                      <Link
+                        to="/solve-problem"
                         className="px-4 py-2 bg-gray-700 rounded-lg font-mono text-sm font-semibold hover:bg-gray-600 transition-all duration-300"
                       >
                         Practice ⚡
-                      </a>
+                      </Link>
                     </div>
                   </div>
 

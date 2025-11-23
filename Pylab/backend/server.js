@@ -41,6 +41,31 @@ app.get('/api/lessons', async (req, res) => {
   }
 });
 
+// Get single lesson by id
+app.get('/api/lessons/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content, key_notes, syntax, important_questions FROM lessons WHERE id = ?', [id]);
+    if (!rows.length) return res.status(404).json({ message: 'Lesson not found' });
+    return res.json(rows[0]);
+  } catch (err) {
+    console.error('Get lesson error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get MCQ questions for a lesson
+app.get('/api/lessons/:id/mcq', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const [rows] = await db.execute('SELECT id, lesson_id, question, option_a, option_b, option_c, option_d, correct_option FROM lesson_mcq WHERE lesson_id = ?', [id]);
+    return res.json(rows);
+  } catch (err) {
+    console.error('Get lesson mcq error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.post('/api/register', async (req, res) => {
   const { email, password, name } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
