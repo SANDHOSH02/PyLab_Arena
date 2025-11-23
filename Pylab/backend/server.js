@@ -14,6 +14,33 @@ const PORT = process.env.PORT || 4000;
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
+// Get all levels
+app.get('/api/levels', async (req, res) => {
+  try {
+    const [rows] = await db.execute('SELECT id, level_number, title FROM levels ORDER BY level_number');
+    return res.json(rows);
+  } catch (err) {
+    console.error('Get levels error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get lessons (optional query param: ?level=1)
+app.get('/api/lessons', async (req, res) => {
+  try {
+    const level = req.query.level;
+    if (level) {
+      const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content FROM lessons WHERE level_id = ? ORDER BY lesson_number', [level]);
+      return res.json(rows);
+    }
+    const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content FROM lessons ORDER BY level_id, lesson_number');
+    return res.json(rows);
+  } catch (err) {
+    console.error('Get lessons error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.post('/api/register', async (req, res) => {
   const { email, password, name } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });

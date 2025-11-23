@@ -50,8 +50,8 @@ export default function Login() {
       if (data) {
         try { localStorage.setItem('user', JSON.stringify(data)); } catch (e) {}
       }
-      alert('Login successful! 🎉 Redirecting...');
-      window.location.href = '/';
+      alert('Login successful! 🎉 Redirecting to dashboard...');
+      window.location.href = '/dashboard';
     } catch (err) {
       alert(err.message || 'Login failed');
     } finally {

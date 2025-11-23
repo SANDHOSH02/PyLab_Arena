@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function Register() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,7 @@ export default function Register() {
       const res = await fetch(`${API_BASE}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ name, email, password }),
       });
       const text = await res.text();
       let data = null;
@@ -156,6 +157,25 @@ export default function Register() {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Name Input (optional) */}
+              <div>
+                <label className="block text-gray-400 text-sm font-mono mb-2">
+                  <span className="text-purple-400">self</span>
+                  <span className="text-green-400">.</span>
+                  name <span className="text-gray-500">=</span>
+                </label>
+                <div className="relative group">
+                  <input
+                    type="text"
+                    placeholder="Your display name (optional)"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-3 pl-10 rounded-lg bg-gray-900 border border-gray-600 text-white placeholder-gray-500 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition font-mono group-hover:border-gray-500"
+                  />
+                  <span className="absolute left-3 top-3.5 text-purple-400">👤</span>
+                </div>
+              </div>
+
               {/* Email Input */}
               <div>
                 <label className="block text-gray-400 text-sm font-mono mb-2">
