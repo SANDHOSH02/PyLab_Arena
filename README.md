@@ -114,4 +114,38 @@ This project does not include a license file by default. Add a `LICENSE` file (M
 ---
 If you want, I can: add server-side eligibility checks for certificates, store generated certificates on the server, or migrate the editor to Monaco. Tell me which next step you'd like.
 
+## Screenshots
+
+Add 9 screenshots to the `ss/` folder at the repository root. Recommended filenames:
+
+- `ss/screen1.png`
+- `ss/screen2.png`
+- `ss/screen3.png`
+- `ss/screen4.png`
+- `ss/screen5.png`
+- `ss/screen6.png`
+- `ss/screen7.png`
+- `ss/screen8.png`
+- `ss/screen9.png`
+
+Below is a simple 3x3 gallery — this will render on GitHub and other Markdown viewers. Replace the files in `ss/` with your actual screenshots.
+
+<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+	<img src="ss/screen1.png" alt="Screenshot 1" width="320" />
+	<img src="ss/screen2.png" alt="Screenshot 2" width="320" />
+	<img src="ss/screen3.png" alt="Screenshot 3" width="320" />
+	<img src="ss/screen4.png" alt="Screenshot 4" width="320" />
+	<img src="ss/screen5.png" alt="Screenshot 5" width="320" />
+	<img src="ss/screen6.png" alt="Screenshot 6" width="320" />
+	<img src="ss/screen7.png" alt="Screenshot 7" width="320" />
+	<img src="ss/screen8.png" alt="Screenshot 8" width="320" />
+	<img src="ss/screen9.png" alt="Screenshot 9" width="320" />
+</div>
+
+Notes:
+- Create the folder `ss/` at the repository root (same level as this `README.md`) and add your nine PNG/JPG images.
+- Use optimized images (recommended under 1MB each) for faster loading on GitHub.
+- If you prefer different filenames or JPG format, update the `src` attributes accordingly.
+
+
 
