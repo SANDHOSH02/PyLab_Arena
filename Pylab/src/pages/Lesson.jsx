@@ -13,6 +13,7 @@ export default function Lesson() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [savedId, setSavedId] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(false);
 
   useEffect(() => {
     const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -120,47 +121,92 @@ export default function Lesson() {
           </div>
         </div>
 
-        {lesson.content && (
-          <section className="mb-6">
-            <h3 className="font-mono text-sm text-gray-400 mb-2">Overview</h3>
-            <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{lesson.content}</p>
-          </section>
-        )}
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            {lesson.content && (
+              <section className="mb-6">
+                <h3 className="font-mono text-sm text-gray-400 mb-2">Overview</h3>
+                <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{lesson.content}</p>
+              </section>
+            )}
 
-        {/* Video / Document Links */}
-        <div className="mb-6 flex gap-3">
-          {lesson.youtube_link && (
-            <a href={lesson.youtube_link} target="_blank" rel="noreferrer" className="px-4 py-2 bg-red-600 hover:bg-red-500 rounded text-sm font-mono">Watch Video</a>
-          )}
-          {lesson.document_link && (
-            <a href={lesson.document_link} target="_blank" rel="noreferrer" className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm font-mono">Open Document</a>
-          )}
-        </div>
+            {lesson.key_notes && (
+              <section className="mb-6">
+                <h4 className="font-semibold font-mono mb-2">Key Notes</h4>
+                <p className="text-sm text-gray-200 whitespace-pre-wrap">{lesson.key_notes}</p>
+              </section>
+            )}
 
-        {lesson.key_notes && (
-          <section className="mb-6">
-            <h4 className="font-semibold font-mono mb-2">Key Notes</h4>
-            <p className="text-sm text-gray-200 whitespace-pre-wrap">{lesson.key_notes}</p>
-          </section>
-        )}
+            {lesson.syntax && (
+              <section className="mb-6">
+                <h4 className="font-semibold font-mono mb-2">Syntax</h4>
+                <pre className="bg-gray-900 p-3 rounded text-sm overflow-auto">{lesson.syntax}</pre>
+              </section>
+            )}
 
-        {lesson.syntax && (
-          <section className="mb-6">
-            <h4 className="font-semibold font-mono mb-2">Syntax</h4>
-            <pre className="bg-gray-900 p-3 rounded text-sm overflow-auto">{lesson.syntax}</pre>
-          </section>
-        )}
+            {lesson.important_questions && (
+              <section className="mb-6">
+                <h4 className="font-semibold font-mono mb-2">Important Questions</h4>
+                <p className="text-sm text-gray-200 whitespace-pre-wrap">{lesson.important_questions}</p>
+              </section>
+            )}
 
-        {lesson.important_questions && (
-          <section className="mb-6">
-            <h4 className="font-semibold font-mono mb-2">Important Questions</h4>
-            <p className="text-sm text-gray-200 whitespace-pre-wrap">{lesson.important_questions}</p>
-          </section>
-        )}
+            <div className="pt-4 border-t border-gray-700 text-right">
+              <Link to="/solve-problem" className="px-4 py-2 bg-blue-600 rounded text-sm font-mono">Practice Problem</Link>
+            </div>
+          </div>
 
-        <div className="pt-4 border-t border-gray-700 text-right">
-          <button onClick={fetchMcqs} className="px-4 py-2 mr-2 bg-green-600 rounded text-sm font-mono hover:bg-green-500">Solve MCQ</button>
-          <Link to="/solve-problem" className="px-4 py-2 bg-blue-600 rounded text-sm font-mono">Practice Problem</Link>
+          {/* Resources / Links Sidebar */}
+          <aside className="md:col-span-1">
+            <div className="bg-gray-900/30 rounded p-4 border border-gray-700 space-y-4">
+              <h4 className="font-mono font-semibold">Resources</h4>
+
+              {/* Resources: show only available items; if none, show subtle message */}
+              {lesson.youtube_link || lesson.document_link ? (
+                <div>
+                  {(() => {
+                    try {
+                      const url = new URL(lesson.youtube_link);
+                      let vid = null;
+                      if (url.hostname.includes('youtu.be')) vid = url.pathname.slice(1);
+                      else if (url.hostname.includes('youtube.com')) vid = url.searchParams.get('v');
+                      if (vid) {
+                        const thumb = `https://img.youtube.com/vi/${vid}/hqdefault.jpg`;
+                        return (
+                          <div>
+                            {!videoPreview ? (
+                              <div className="space-y-2">
+                                <div className="w-full aspect-video rounded overflow-hidden bg-black">
+                                  <img src={thumb} alt="video thumbnail" className="w-full h-full object-cover" />
+                                </div>
+                                <div className="flex gap-2">
+                                  <button onClick={() => setVideoPreview(true)} className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-500 rounded text-sm">Preview Video</button>
+                                  <a href={lesson.youtube_link} target="_blank" rel="noreferrer" className="px-3 py-2 bg-gray-700 rounded text-sm">Open YouTube</a>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="w-full aspect-video rounded overflow-hidden">
+                                <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${vid}`} title="YouTube video" allowFullScreen frameBorder="0"></iframe>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }
+                    } catch (e) {}
+                    return (
+                      <a href={lesson.youtube_link} target="_blank" rel="noreferrer" className="block px-3 py-2 bg-red-600 hover:bg-red-500 rounded text-sm text-center">Watch Video</a>
+                    );
+                  })()}
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500">No resources available for this lesson</div>
+              )}
+
+              <div className="pt-2">
+                <button onClick={fetchMcqs} className="w-full px-4 py-2 bg-green-600 rounded text-sm font-mono hover:bg-green-500">Solve MCQ</button>
+              </div>
+            </div>
+          </aside>
         </div>
 
         {/* MCQ Quiz Section */}

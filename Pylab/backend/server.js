@@ -30,10 +30,10 @@ app.get('/api/lessons', async (req, res) => {
   try {
     const level = req.query.level;
     if (level) {
-      const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content FROM lessons WHERE level_id = ? ORDER BY lesson_number', [level]);
+      const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content, youtube_link, document_link FROM lessons WHERE level_id = ? ORDER BY lesson_number', [level]);
       return res.json(rows);
     }
-    const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content FROM lessons ORDER BY level_id, lesson_number');
+    const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content, youtube_link, document_link FROM lessons ORDER BY level_id, lesson_number');
     return res.json(rows);
   } catch (err) {
     console.error('Get lessons error:', err);
@@ -45,7 +45,7 @@ app.get('/api/lessons', async (req, res) => {
 app.get('/api/lessons/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content, key_notes, syntax, important_questions FROM lessons WHERE id = ?', [id]);
+    const [rows] = await db.execute('SELECT id, level_id, lesson_number, title, content, key_notes, syntax, important_questions, youtube_link, document_link FROM lessons WHERE id = ?', [id]);
     if (!rows.length) return res.status(404).json({ message: 'Lesson not found' });
     return res.json(rows[0]);
   } catch (err) {
