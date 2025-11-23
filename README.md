@@ -122,14 +122,14 @@ Below is a simple 3x3 gallery — this will render on GitHub and other Markdown 
 
 <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
 	<img src="Pylab/ss/1.png" alt="Screenshot 1" width="320" />
-	<img src="ss/2.png" alt="Screenshot 2" width="320" />
-	<img src="ss/3.png" alt="Screenshot 3" width="320" />
-	<img src="ss/4.png" alt="Screenshot 4" width="320" />
-	<img src="ss/5.png" alt="Screenshot 5" width="320" />
-	<img src="ss/6.png" alt="Screenshot 6" width="320" />
-	<img src="ss/7.png" alt="Screenshot 7" width="320" />
-	<img src="ss/8.png" alt="Screenshot 8" width="320" />
-	<img src="ss/9.png" alt="Screenshot 9" width="320" />
+	<img src="Pylab/ss/2.png" alt="Screenshot 2" width="320" />
+	<img src="Pylab/ss/3.png" alt="Screenshot 3" width="320" />
+	<img src="Pylab/ss/4.png" alt="Screenshot 4" width="320" />
+	<img src="Pylab/ss/5.png" alt="Screenshot 5" width="320" />
+	<img src="Pylab/ss/6.png" alt="Screenshot 6" width="320" />
+	<img src="Pylab/ss/7.png" alt="Screenshot 7" width="320" />
+	<img src="Pylab/ss/8.png" alt="Screenshot 8" width="320" />
+	<img src="Pylab/ss/9.png" alt="Screenshot 9" width="320" />
 </div>
 
 Notes:
