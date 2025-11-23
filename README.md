@@ -30,33 +30,50 @@ A lightweight, interactive learning platform for Python — lessons, quizzes, co
 
 		 Example (MySQL CLI):
 
-		 ```powershell
-		 mysql -u root -p pylab < "D:/Xampp/htdocs/PyLab_Arena/Pylab/Db/pylab (2).sql"
-		 ```
+		```markdown
+		## Screenshots
 
-2. Backend
+		Below is a styled 3x3 gallery with spacing and a centered container. It looks good on GitHub and other Markdown renderers that support inline HTML. Replace the files in `Pylab/ss/` with your screenshots (or update the `src` paths if you place them elsewhere).
 
-	 - Install dependencies and start the server:
+		<div style="max-width:1000px;margin:18px auto;padding:18px;background:#f8fafc;border-radius:12px;box-shadow:0 6px 18px rgba(20,20,30,0.06);">
+			<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:stretch;">
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/1.png" alt="Screenshot 1" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/2.png" alt="Screenshot 2" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/3.png" alt="Screenshot 3" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/4.png" alt="Screenshot 4" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/5.png" alt="Screenshot 5" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/6.png" alt="Screenshot 6" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/7.png" alt="Screenshot 7" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/8.png" alt="Screenshot 8" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+				<figure style="margin:0;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 4px 10px rgba(10,10,20,0.04);">
+					<img src="Pylab/ss/9.png" alt="Screenshot 9" style="width:100%;height:220px;object-fit:cover;display:block;" />
+				</figure>
+			</div>
+			<p style="margin:12px 0 0 0;color:#5b6170;font-size:13px;text-align:center;">Tip: Use optimized, consistent-sized images for the best result (recommended under 1MB each).</p>
+		</div>
 
-		 ```powershell
-		 cd "D:/Xampp/htdocs/PyLab_Arena/Pylab/backend"
-		 npm install
-		 # set environment variables in a .env file or your shell
-		 node server.js
-		 ```
+		Notes:
+		- Create the folder `Pylab/ss/` (relative to this README) and add your nine PNG/JPG images named `1.png`..`9.png`, or update the `src` attributes to match your filenames.
+		- If you prefer different dimensions, adjust the `height:220px` rule in the `<img>` styles to your preferred aspect.
+		- For very large images, consider resizing/optimizing before adding to the repo for faster loading on GitHub.
 
-	 - Environment variables (create `.env` in backend folder):
-
-		 ```env
-		 DB_HOST=127.0.0.1
-		 DB_USER=root
-		 DB_PASSWORD=your_db_password
-		 DB_NAME=pylab
-		 PORT=4000
-		 ```
-
-3. Frontend
-
+		``` 
 	 - Install and run the frontend (Vite)
 
 		 ```powershell
