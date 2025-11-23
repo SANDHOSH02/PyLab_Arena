@@ -55,11 +55,18 @@ app.get('/api/problems/:id', async (req, res) => {
 app.post('/api/problems/:id/attempt', async (req, res) => {
   try {
     const problemId = req.params.id;
-    const { user_id, score } = req.body;
+    const { user_id, score, submission } = req.body;
     if (typeof score !== 'number') return res.status(400).json({ message: 'Score (number) is required' });
 
-    const [result] = await db.execute('INSERT INTO problem_results (user_id, problem_id, score) VALUES (?, ?, ?)', [user_id || null, problemId, score]);
-    return res.status(201).json({ id: result.insertId, message: 'Problem attempt saved' });
+    // Try to insert including submission if the column exists; if it fails (older schema), fallback to insert without it
+    try {
+      const [result] = await db.execute('INSERT INTO problem_results (user_id, problem_id, score, submission) VALUES (?, ?, ?, ?)', [user_id || null, problemId, score, submission || null]);
+      return res.status(201).json({ id: result.insertId, message: 'Problem attempt saved' });
+    } catch (e) {
+      console.warn('Insert with submission failed, falling back (maybe column missing):', e.message);
+      const [result] = await db.execute('INSERT INTO problem_results (user_id, problem_id, score) VALUES (?, ?, ?)', [user_id || null, problemId, score]);
+      return res.status(201).json({ id: result.insertId, message: 'Problem attempt saved (without submission)' });
+    }
   } catch (err) {
     console.error('Save problem attempt error:', err);
     return res.status(500).json({ message: 'Server error' });

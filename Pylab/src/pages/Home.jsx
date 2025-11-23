@@ -103,7 +103,7 @@ const Home = () => {
             </Link>
 
             <Link
-              to="/problems"
+              to="/Solve-problem"
               className="group border-2 border-gray-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-800 hover:border-gray-500 transition-all duration-300 transform hover:scale-105"
             >
               Solve Problems
@@ -118,11 +118,11 @@ const Home = () => {
               <div className="text-sm text-gray-400 mt-1">Lessons</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-green-400">500+</div>
+              <div className="text-3xl font-bold text-green-400">50+</div>
               <div className="text-sm text-gray-400 mt-1">Problems</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-purple-400">10k+</div>
+              <div className="text-3xl font-bold text-purple-400">1+</div>
               <div className="text-sm text-gray-400 mt-1">Learners</div>
             </div>
           </div>

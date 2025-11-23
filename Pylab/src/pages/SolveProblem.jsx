@@ -161,7 +161,7 @@ export default function SolveProblem() {
         const res = await fetch(`${API_BASE}/api/problems/${selected.id}/attempt`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: record.userId, score })
+          body: JSON.stringify({ user_id: record.userId, score, submission: record.code })
         });
         if (!res.ok) {
           console.warn('Failed to save attempt to server');
