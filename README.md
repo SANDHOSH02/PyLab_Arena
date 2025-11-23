@@ -121,7 +121,7 @@ If you want, I can: add server-side eligibility checks for certificates, store g
 Below is a simple 3x3 gallery — this will render on GitHub and other Markdown viewers. Replace the files in `ss/` with your actual screenshots.
 
 <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
-	<img src="ss/1.png" alt="Screenshot 1" width="320" />
+	<img src="Pylab/ss/1.png" alt="Screenshot 1" width="320" />
 	<img src="ss/2.png" alt="Screenshot 2" width="320" />
 	<img src="ss/3.png" alt="Screenshot 3" width="320" />
 	<img src="ss/4.png" alt="Screenshot 4" width="320" />
