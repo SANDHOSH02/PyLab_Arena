@@ -10,6 +10,9 @@ export default function Lesson() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [answers, setAnswers] = useState({});
   const [score, setScore] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [savedId, setSavedId] = useState(null);
 
   useEffect(() => {
     const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -52,14 +55,41 @@ export default function Lesson() {
     setAnswers((prev) => ({ ...prev, [questionId]: option }));
   };
 
-  const submitQuiz = () => {
+  const submitQuiz = async () => {
     if (!mcqs) return;
     let correct = 0;
     mcqs.forEach((q) => {
       const given = answers[q.id];
       if (given && given.toUpperCase() === (q.correct_option || '').toUpperCase()) correct++;
     });
-    setScore({ correct, total: mcqs.length });
+    const result = { correct, total: mcqs.length };
+    setScore(result);
+
+    // Save to backend
+    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const rawUser = localStorage.getItem('user');
+    let userId = null;
+    try { userId = rawUser ? JSON.parse(rawUser).id : null; } catch (e) { userId = null; }
+
+    setSaving(true); setSaveError(null); setSavedId(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/lessons/${id}/mcq/result`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, score: correct })
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message || 'Failed to save result');
+      }
+      const body = await res.json();
+      setSavedId(body.id || null);
+    } catch (err) {
+      console.error('Save result error', err);
+      setSaveError(err.message || 'Failed to save result');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return (
@@ -160,6 +190,17 @@ export default function Lesson() {
               <div className="mt-4 text-center font-mono">
                 <div className="text-lg">Score: {score.correct} / {score.total}</div>
                 <div className="text-sm text-gray-300">{Math.round((score.correct/score.total)*100)}% correct</div>
+                <div className="mt-2">
+                  {saving ? (
+                    <div className="text-sm text-yellow-300">Saving result...</div>
+                  ) : saveError ? (
+                    <div className="text-sm text-red-400">Save error: {saveError}</div>
+                  ) : savedId ? (
+                    <div className="text-sm text-green-300">Result saved (id: {savedId})</div>
+                  ) : (
+                    <div className="text-sm text-gray-400">Result not saved</div>
+                  )}
+                </div>
               </div>
             )}
           </div>

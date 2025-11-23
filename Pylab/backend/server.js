@@ -66,6 +66,21 @@ app.get('/api/lessons/:id/mcq', async (req, res) => {
   }
 });
 
+// Save MCQ result for a lesson
+app.post('/api/lessons/:id/mcq/result', async (req, res) => {
+  try {
+    const lessonId = req.params.id;
+    const { user_id, score } = req.body;
+    if (typeof score !== 'number') return res.status(400).json({ message: 'Score (number) is required' });
+
+    const [result] = await db.execute('INSERT INTO mcq_results (user_id, lesson_id, score) VALUES (?, ?, ?)', [user_id || null, lessonId, score]);
+    return res.status(201).json({ id: result.insertId, message: 'Result saved' });
+  } catch (err) {
+    console.error('Save mcq result error:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 app.post('/api/register', async (req, res) => {
   const { email, password, name } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
