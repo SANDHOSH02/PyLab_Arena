@@ -31,6 +31,7 @@ function App() {
             { to: "/learn", label: "Learn" },
             { to: "/dashboard", label: "Dashboard" },
             { to: "/solve-problem", label: "Solve Problem" },
+            { to: "/certificate", label: "Certificate" },
           ].map((item) => (
             <Link
               key={item.to}

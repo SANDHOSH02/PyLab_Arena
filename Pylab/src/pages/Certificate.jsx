@@ -4,7 +4,7 @@ export default function Certificate() {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [threshold, setThreshold] = useState(5);
+  const threshold = 5; // fixed minimum threshold (user cannot lower this)
   const [generating, setGenerating] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const canvasRef = useRef(null);
@@ -407,16 +407,10 @@ export default function Certificate() {
                 </h3>
                 
                 <div className="space-y-3">
-                  <label className="block">
+                  <div>
                     <span className="text-sm text-gray-400 font-mono mb-2 block">Minimum Problems Threshold</span>
-                    <input 
-                      type="number" 
-                      value={threshold} 
-                      min={1} 
-                      onChange={(e) => setThreshold(Number(e.target.value))} 
-                      className="w-full bg-gray-900 border border-gray-700 px-4 py-2 rounded-lg font-mono outline-none focus:border-blue-500 transition-all"
-                    />
-                  </label>
+                    <div className="w-full bg-gray-900 border border-gray-700 px-4 py-2 rounded-lg font-mono text-white">{threshold} problems (fixed)</div>
+                  </div>
 
                   <div className={`p-4 rounded-lg border ${
                     eligible 

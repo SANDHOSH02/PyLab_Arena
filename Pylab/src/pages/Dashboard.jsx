@@ -92,21 +92,7 @@ export default function Dashboard() {
               className="px-6 py-2 bg-red-600 hover:bg-red-500 rounded-lg font-mono font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
             >
               <span>Logout</span>
-            <div className="bg-gradient-to-br from-green-600/10 to-emerald-600/10 border border-green-500/20 rounded-lg p-6 backdrop-blur-sm">
-              <h3 className="font-mono font-bold text-lg mb-3">
-                <span className="text-green-400"># </span>Certificates
-              </h3>
-              <div className="space-y-3">
-                <div className="text-sm text-gray-300 font-mono">Generate a JPG certificate after solving problems.</div>
-                <a
-                  href="/certificate"
-                  className="block w-full py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg font-mono text-sm font-semibold hover:from-green-500 hover:to-emerald-500 transition-all duration-300 text-center"
-                >
-                  Generate Certificate →
-                </a>
-              </div>
-            </div>
-
+           
               <span>🚪</span>
             </button>
           </div>
