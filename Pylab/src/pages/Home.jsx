@@ -195,9 +195,17 @@ const Home = () => {
 
       {/* FOOTER */}
       <footer className="py-6 text-center text-gray-500 border-t border-gray-800 relative z-10">
-        <div className="font-mono text-sm">
-          © {new Date().getFullYear()} PyLearn <span className="text-gray-600">|</span>{" "}
-          <span className="text-blue-400">{'{ Code • Learn • Master }' } {'Made By Sandhosh !!'}</span>
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 px-4">
+          <div className="font-mono text-sm">
+            © {new Date().getFullYear()} PyLearn
+          </div>
+          <div className="text-sm font-mono text-gray-300">{'{ Code • Learn • Master }'}</div>
+          <div className="flex items-center gap-3">
+            <a href="/developed-by" className="text-blue-400 hover:underline text-sm">Developed By</a>
+            <a href="https://github.com/SANDHOSH02" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white text-sm">GitHub</a>
+            <a href="https://sandhosh.vercel.app/" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white text-sm">Portfolio</a>
+            <a href="https://www.linkedin.com/in/sandhosh-g-884b7b279/" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white text-sm">LinkedIn</a>
+          </div>
         </div>
       </footer>
 

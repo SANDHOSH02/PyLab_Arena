@@ -7,6 +7,7 @@ import SolveProblem from "./pages/SolveProblem.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Lesson from "./pages/Lesson.jsx";
 import Certificate from "./pages/Certificate.jsx";
+import DevelopedBy from "./pages/DevelopedBy.jsx";
 
 function App() {
   return (
@@ -78,6 +79,7 @@ function App() {
         <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/certificate" element={<Certificate />} />
+          <Route path="/developed-by" element={<DevelopedBy />} />
           <Route path="/learn/:id" element={<Lesson />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
